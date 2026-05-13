@@ -1,0 +1,11 @@
+<CycloneDDS>
+  <Domain>
+    <Discovery>
+      <Ports>
+        <Base>7400</Base>
+        <DomainGain>200</DomainGain>
+        <ParticipantGain>10</ParticipantGain>
+      </Ports>
+    </Discovery>
+  </Domain>
+</CycloneDDS>
