@@ -1,5 +1,70 @@
 # Sensor Stack Commands (AEye + Livox + Arena + Boson)
 
+## Dependency List (Jetson, Ubuntu 22.04, ROS 2 Humble)
+
+Assumption: this workspace is always run on Jetson with ROS 2 Humble already installed under `/opt/ros/humble`.
+
+### System packages
+
+```bash
+sudo apt update
+sudo apt install -y \
+  build-essential \
+  cmake \
+  git \
+  pkg-config \
+  python3-dev \
+  python3-pip \
+  libeigen3-dev \
+  libfmt-dev \
+  libapr1-dev \
+  libpcl-dev \
+  libopencv-dev
+```
+
+### ROS 2 packages
+
+```bash
+sudo apt update
+sudo apt install -y \
+  ros-humble-rclcpp \
+  ros-humble-rclcpp-components \
+  ros-humble-std-msgs \
+  ros-humble-std-srvs \
+  ros-humble-sensor-msgs \
+  ros-humble-geometry-msgs \
+  ros-humble-rcl-interfaces \
+  ros-humble-rcutils \
+  ros-humble-tf2-ros \
+  ros-humble-tf2-geometry-msgs \
+  ros-humble-cv-bridge \
+  ros-humble-pcl-conversions \
+  ros-humble-ament-cmake \
+  ros-humble-ament-cmake-auto \
+  ros-humble-rosidl-default-generators \
+  ros-humble-rosidl-default-runtime \
+  ros-humble-ros2launch \
+  ros-humble-rosbag2 \
+  pybind11-dev
+```
+
+### SDK / vendor prerequisites
+
+1. Arena SDK (required by `arena_camera_node`): install LUCID ArenaSDK and ensure `/etc/ld.so.conf.d/Arena_SDK.conf` exists.
+2. AEye SDK (required by `aeye_ros2_driver_humble`): provide SDK at `src/aeye_ros2_humble_driver_jetson/sdk_build` with:
+   - `lib/libAEyeSensorSDK.a`
+   - `lib/cmake/libAEyeSensorSDK/*`
+   - `include/*`
+
+### Optional: resolve remaining ROS dependencies via rosdep
+
+```bash
+cd /home/mg-nx-1/SARNIF_ws
+source /opt/ros/humble/setup.bash
+rosdep update
+rosdep install --from-paths src --ignore-src -r -y
+```
+
 ## Build
 
 ```bash
@@ -54,5 +119,6 @@ ros2 run boson_camera boson_camera_node y
 ```
 
 ## Launch All
-
+```bash
 ros2 launch boson_camera sensor_stack.launch.py
+```
