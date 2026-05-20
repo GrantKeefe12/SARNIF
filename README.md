@@ -93,71 +93,18 @@ ros2 launch livox_ros2_avia livox_lidar_launch.py
 ## Run MAVROS (global position + full quaternion orientation)
 
 ```bash
-source /home/mg-nx-1/SARNIF_ws/sensor_stack_env.sh
-
 ros2 launch boson_camera mavros_global_position.launch.xml \
   fcu_url:=/dev/ttyTHS1:921600
 ```
 
-### Check global position rate
+### Optional Debug checks to ensure good data collection
+
+#### Check global position rate
 
 ```bash
 source /home/mg-nx-1/SARNIF_ws/sensor_stack_env.sh
 timeout 10 ros2 topic hz /mavros/global_position/global
 ```
-
-### Orientation topic (full quaternion)
-
-```bash
-source /home/mg-nx-1/SARNIF_ws/sensor_stack_env.sh
-ros2 topic echo /mavros/imu/data --once
-```
-
-### Confirm minimal MAVROS topic set
-
-```bash
-source /home/mg-nx-1/SARNIF_ws/sensor_stack_env.sh
-ros2 topic list | grep '^/mavros/'
-```
-
-Expected position + orientation signals:
-- `/mavros/global_position/global`
-- `/mavros/imu/data` (orientation quaternion x/y/z/w)
-
-With the current plugin allowlist, MAVROS is reduced to only `global_position` and `imu` plugins to keep overhead low while providing full quaternion attitude.
-
-**Measured Performance (with global_position + imu plugin config):**
-- **Default out-of-box rate: ~35 Hz sustained** ✓ (excellent baseline, 2.3× improvement over previous config)
-- Rate is stable and consistent (min/max inter-message intervals ~17-81 ms)
-- Successfully logging to rosbag2 without drops
-
-### Achieving Higher Rates (Target: 100 Hz)
-
-**Current Ceiling Analysis:**
-- Serial link (921600 baud) can support ~1,150 MAVLink messages/sec max
-- GLOBAL_POSITION_INT message is ~20 bytes uncompressed
-- **Serial bandwidth is NOT the bottleneck** (35 Hz = 700 bytes/sec, only 0.06% utilization)
-- **Limit is ArduPilot firmware default stream rate** for this FCU
-
-**To push beyond 35 Hz:**
-
-1. **On ArduPilot FCU:** Increase stream rate parameter `SR1_POSITION` or `SR0_POSITION` (depending on FCU port assignment)
-   - Via MAVSDK CLI or Mission Planner: set to 50+ Hz
-   - Test if firmware supports 100+ Hz (some older versions cap at 50 Hz)
-
-2. **Higher Baud Rate (optional, if rate ceiling permits):**
-   - Increase FCU serial speed to 115200, 230400, 576000, or 921600+ (hardware-dependent)
-   - Update `fcu_url` in mavros_global_position.launch.xml
-
-3. **Test Rate Control via MAVROS** (if above doesn't work):
-   - Temporarily add `command` plugin to plugin_allowlist
-   - Call: `ros2 service call /mavros/set_stream_rate mavros_msgs/srv/StreamRate '{stream_id: 6, message_rate: 100, on_off: true}'`
-   - Measure: `timeout 10 ros2 topic hz /mavros/global_position/global`
-
-**Expected Reality:**
-- 100 Hz on serial is unlikely unless FCU explicitly supports it (most older ArduPilot versions max out ~50 Hz default)
-- 35 Hz baseline with global-position-only config is production-ready for most applications
-- If 100 Hz required, recommend UDP network telemetry instead of serial
 
 ## Run Arena (Triton)
 
@@ -184,11 +131,4 @@ ros2 run boson_camera boson_camera_node y
 ros2 launch boson_camera sensor_stack.launch.py
 ```
 
-`sensor_stack.launch.py` now also starts MAVROS by default using `fcu_url:=/dev/ttyTHS1:921600` with a `global_position`-only plugin profile.
-
-To override or disable it:
-
-```bash
-ros2 launch boson_camera sensor_stack.launch.py mavros_fcu_url:=/dev/ttyTHS1:921600
-ros2 launch boson_camera sensor_stack.launch.py start_mavros:=false
-```
+`sensor_stack.launch.py` also starts MAVROS by default using `fcu_url:=/dev/ttyTHS1:921600` with a `global_position`-only plugin profile.
