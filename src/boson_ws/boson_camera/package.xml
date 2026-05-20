@@ -18,6 +18,7 @@
   <depend>arena_camera_node</depend>
   <depend>livox_ros2_avia</depend>
   <depend>aeye_ros2_driver_humble</depend>
+  <exec_depend>mavros</exec_depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
