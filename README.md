@@ -141,5 +141,5 @@ ros2 bag record \
   /livox/lidar \
   /mavros/global_position/global \
   /mavros/imu/data \
-  -o bags/sarnif_test_$(date +%Y%m%d_%H%M%S)
+  -o bags/<bag name>
 ```
