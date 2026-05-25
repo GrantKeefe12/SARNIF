@@ -52,8 +52,6 @@ source /home/mg-nx-2/SARNIF/sensor_stack_env.sh
 ## Run AEye
 
 ```bash
-pkill -f 'aeye_ros2_driver_humble_launch.py|aeye_ros2_driver_humble_node' || true
-source /home/mg-nx-1/SARNIF_ws/sensor_stack_env.sh
 
 ros2 launch aeye_ros2_driver_humble aeye_ros2_driver_humble_launch.py \
   sensor_ip:=10.10.10.178 \
