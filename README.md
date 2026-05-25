@@ -1,52 +1,9 @@
 # Sensor Stack Commands (AEye + Livox + Arena + Boson)
 
-## Dependency List (Jetson, Ubuntu 22.04, ROS 2 Humble)
+## Dependency List (Jetson, Ubuntu 22.04, ROS 2 Humble, Cyclone DDS)
 
 Assumption: this workspace is always run on Jetson with ROS 2 Humble already installed under `/opt/ros/humble`.
 
-### System packages
-
-```bash
-sudo apt update
-sudo apt install -y \
-  build-essential \
-  cmake \
-  git \
-  pkg-config \
-  python3-dev \
-  python3-pip \
-  libeigen3-dev \
-  libfmt-dev \
-  libapr1-dev \
-  libpcl-dev \
-  libopencv-dev
-```
-
-### ROS 2 packages
-
-```bash
-sudo apt update
-sudo apt install -y \
-  ros-humble-rclcpp \
-  ros-humble-rclcpp-components \
-  ros-humble-std-msgs \
-  ros-humble-std-srvs \
-  ros-humble-sensor-msgs \
-  ros-humble-geometry-msgs \
-  ros-humble-rcl-interfaces \
-  ros-humble-rcutils \
-  ros-humble-tf2-ros \
-  ros-humble-tf2-geometry-msgs \
-  ros-humble-cv-bridge \
-  ros-humble-pcl-conversions \
-  ros-humble-ament-cmake \
-  ros-humble-ament-cmake-auto \
-  ros-humble-rosidl-default-generators \
-  ros-humble-rosidl-default-runtime \
-  ros-humble-ros2launch \
-  ros-humble-rosbag2 \
-  pybind11-dev
-```
 
 ### SDK / vendor prerequisites
 
@@ -74,12 +31,22 @@ ssh mg-nx-1@10.223.0.9
 password: mg-nx-1
 ```
 
+## Connecting to the M600
+
+Use the BEC router, Network SSID: SARNIF, password: 4EB3A044
+
 If this isn't working give the plane a few minutes to boot and configure etherntet
 
 ## Source (every terminal)
 
+ALERT:
+
 ```bash
 source /home/mg-nx-1/SARNIF_ws/sensor_stack_env.sh
+```
+M600:
+```bash
+source /home/mg-nx-2/SARNIF/sensor_stack_env.sh
 ```
 
 ## Run AEye
