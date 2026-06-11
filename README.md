@@ -31,11 +31,20 @@ ssh mg-nx-1@10.223.0.9
 password: mg-nx-1
 ```
 
+If this isn't working give the plane a few minutes to boot and configure etherntet
+
 ## Connecting to the M600
 
 Use the BEC router, Network SSID: SARNIF, password: 4EB3A044
 
-If this isn't working give the plane a few minutes to boot and configure etherntet
+M600 Jetson Static IP:
+```bash
+ssh mg-nx-2@XXX.XXX.XXX.XXX
+
+password: mg-nx-2
+```
+
+Ensure you start nodes and bag before takeoff and connect and shutdown on landing.
 
 ## Source (every terminal)
 
@@ -89,6 +98,16 @@ ros2 run boson_camera boson_camera_node y
 ```bash
 ros2 launch boson_camera mavros_global_position.launch.xml \
   fcu_url:=/dev/ttyTHS1:921600
+```
+
+## Run DJI OSDK ros2 bridge (Only on M600 pro/mg-nx-2 Jetson)
+
+```bash
+cd /home/mg-nx-2/Onboard-SDK
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+ros2 run dji_osdk_state_bridge dji_osdk_state_bridge_node \
+  --ros-args -p config_file:=$(pwd)/dji_osdk_state_bridge/config/UserConfig.txt
 ```
 
 ## Launch All
