@@ -110,20 +110,78 @@ ros2 run dji_osdk_state_bridge dji_osdk_state_bridge_node \
   --ros-args -p config_file:=$(pwd)/dji_osdk_state_bridge/config/UserConfig.txt
 ```
 
-## Launch All
+## Launch Stacks
+
+### Big Bird stack
+
 ```bash
-ros2 launch boson_camera sensor_stack.launch.py
+ros2 launch boson_camera big_bird_stack.launch.py
 ```
 
-`sensor_stack.launch.py` also starts MAVROS by default using `fcu_url:=/dev/ttyTHS1:921600` with a `global_position`-only plugin profile.
+This launch starts:
+- Livox Avia launch (`livox_lidar_launch.py`)
+- Arena camera node (`arena_camera_node start`)
+- Bayer to RGB conversion node (`bayer_to_rgb_node`)
+- MAVROS launch (`mavros_global_position.launch.xml`) with default `fcu_url:=/dev/ttyTHS1:921600`
+
+This launch does not start:
+- AEye launch
+- Boson thermal node
+- Static transform publisher
+
+### M600 stack
+
+```bash
+ros2 launch boson_camera M600_stack.launch.py
+```
+
+This launch starts:
+- Livox Avia launch (`livox_lidar_launch.py`)
+- Arena camera node (`arena_camera_node start`)
+- Bayer to RGB conversion node (`bayer_to_rgb_node`)
+
+This launch does not start:
+- MAVROS
+- AEye launch
+- Boson thermal node
+- Static transform publisher
 
 ## Data recording
 
+### Big Bird bag record (with MAVROS)
+
 ```bash
 ros2 bag record \
+  --storage mcap \
+  --max-bag-size 10000000000 \
+  -o bags/<bag_name> \
   /rgb_image \
   /livox/lidar \
   /mavros/global_position/global \
   /mavros/imu/data \
-  -o bags/<bag name>
+  /mavros/local_position/pose
 ```
+
+### M600 bag record (no MAVROS, with Boson + DJI state)
+
+```bash
+ros2 bag record \
+  --storage mcap \
+  --max-bag-size 10000000000 \
+  -o bags/<bag_name> \
+  /rgb_image \
+  /livox/lidar \
+  /boson/image_raw \
+  /dji/state/imu \
+  /dji/state/odometry \
+  /dji/state/navsat \
+  /dji/state/lat_lon \
+  /dji/state/flight_status
+```
+
+DJI state message types:
+- `/dji/state/imu` (`sensor_msgs/msg/Imu`)
+- `/dji/state/odometry` (`nav_msgs/msg/Odometry`)
+- `/dji/state/navsat` (`sensor_msgs/msg/NavSatFix`)
+- `/dji/state/lat_lon` (`geometry_msgs/msg/PointStamped`)
+- `/dji/state/flight_status` (`std_msgs/msg/UInt8`)

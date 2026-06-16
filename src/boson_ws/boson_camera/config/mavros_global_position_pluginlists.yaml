@@ -3,3 +3,4 @@
     plugin_allowlist:
       - global_position
       - imu
+      - local_position
