@@ -167,7 +167,6 @@ ros2 bag record \
 ```bash
 ros2 bag record \
   --storage mcap \
-  --max-bag-size 10000000000 \
   -o bags/<bag_name> \
   /rgb_image \
   /livox/lidar \
